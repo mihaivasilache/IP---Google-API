@@ -4,4 +4,52 @@ We considered the potential risks that may interfere due to the range of serious
 
 Risks Decription:
   
+1.  Google server is down
+      
+2.  Changes on Google Framework
+
+3.  Google policies changes
+
+4.  No synchronization between the groups who are supplying elements of the project
+      Probability of Occurance: 35%
+      High Severity 
+      In order to fight with this risk, we have established weekly meetings, during which we will discuss the level at which each member of the
+      team is regarding his/her work.
+    
+5. Overestimation of own IT capabilities
+      Probability of Occurance: 10%
+      Hight Severity 
+      In order to fight with this risk, we have respected the documentation and research stage, getting to know the way in which we will proceed 
+      for integrating the Google API services in our application.
+      
+6.  Fail to implement some functionalities until the deadline
+      Probability of Occurance: 10%
+      High Severity
+      In order to fight with this risk, we have done a schedule, based on frequent meetings and weekly tasks assigned 
+      to each member of the team.
+
+7.  Our server is down
+      Probability of Occurance: 5%
+      High Severity
+
+8.  Project team members will not be in place when required
+      Probability of Occurrence: 25%
+      Medium Severity
+      In order to fight with this possible risk, we have established tematic groups on more communication channels, 
+      such that we can decide meeting hours convenient for all of us.
+           
+9.  Risks to the project caused by requirements that are inadequately defined
+      Probability of Occurance: 15%
+      Medium Severity (Changes can be done in order to adapt functionalities to current requirements)
+      In order to fight with this risk, we have established the requirements with great attention and precision, after debating during
+      the team meetings.
+      
+10.  Fail to model the necessary classes in the diagrams
+      Probability of Occurance: 10%
+      Medium Severity (Changes can be done in order to adapt functionalities to current requirements)
+      In order to fight with this risk, we have established the classes in the diagram with great attention and precision,
+      after debating during the team meetings.
+      
+      
+      
 
