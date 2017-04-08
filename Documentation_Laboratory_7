@@ -111,3 +111,16 @@ vicinity - lists a simplified address for the place, including the street name, 
 
 website - lists the authoritative website for this place, such as a business' homepage.
 
+
+
+
+For gPlaces search we should make an request to 
+    https://maps.googleapis.com/maps/api/place/nearbysearch/output?parameters
+
+    where output is json or xml; 
+        minimum required parameters are: 
+        our application key, 
+        the location of the place with interest and the radius in wich we search for places, 
+        and the radius distance to search or name, type, keyword, language; 
+        the rankby parameter speciafies the results order
+    
