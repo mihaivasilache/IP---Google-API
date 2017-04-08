@@ -1,0 +1,113 @@
+GOOGLE PLACES API
+
+
+1. Go to developers.google.com/places/documentation
+   Select your development platform. In our case, we chose the google places API Web Services. 
+   This API has the following services:
+	1. Place Search (doc by ULI)
+	2. Place Details
+	3. Place Add
+	4. Place Photos
+	5. Place Autocomplete 
+	6. Query Autocomplete
+In order to use these functionalities, you have to get a private key, which can be obtained from developer.google.com/places/web-services/get-api-key;
+For getting a key, you firstly have to complete a short formular, entering the name of your project and agreeing with the terms and conditions. 
+Afterwards, you have to activate your key from Google Console. 
+The management of the key is done by Google Console (upgrading the key to a premium one);
+This has some further benefits: 
+	Licences for asset tracking implementations;		
+	Annual contracts with enterprise terms;
+	24 hours technical support;
+	Guaranteed ad-free and enhances API features;
+Google also provides services as:
+Invite Only(Intranets) && Asset Tracking
+
+The key has a quota-> there can be limited the number of IP addresses that can use your API's key to send requests;
+Key restrictions:
+	To prevent unauthorized use and quota theft, restrict your key:
+	HTTP referres
+	IP addresses
+	Android apps
+	iOS apps
+
+For requests, the key must be passed as a parameter. Example: 
+https://maps.googleapis.com/maps/api/place/nearbysearch/json
+ ?location=-33.8670522,151.1957362
+ &radius=500
+ &types=food
+ &name=harbour
+ &key=YOUR_API_KEY
+
+Premium Data(current deprecated -> 2 May)
+
+Place Details
+A request is a HTTP URL:
+https://maps.googleapis.com/maps/api/place/details/output?parameters
+The output -> json/xml
+
+Parameters: key -> API key
+            placeid(returned by place search)/ reference(ret by place search, but deprecared till 24June)
+
+Optional Parameters:
+Extensions(Additional fields for place details, such as Premium Data -> scorul returnat)&&Language Code
+Query Example:
+https://maps.googleapis.com/maps/api/place/details/json?placeid=ChIJN1t_tDeuEmsRUsoyG83frY4&key=YOUR_API_KEY
+
+
+
+Place Details Results:
+address_components[] -> array of addresses
+formatted_addressed -> human readable form
+phone no && formatted(place no in local format)
+
+adr_address -> place address in adr microformat(microformats)
+
+geometry -> location && viewport
+
+icon -> URL of a suggested icon
+
+id -> unique stable identifier denoting this place
+
+international_phone_number
+
+name -> human readable name for the returned results
+
+opening_hours ->
+	open_now -> boolean value
+	periods[] -> array of opening periods
+	weekday_text
+
+permanently_closed -> boolean value
+
+photos[] - an array of photo objects(references)
+
+place_id 
+
+scope -> APP / GOOGLE (the scope of place id)
+
+price_level — The price level of the place, on a scale of 0 to 4. ( free to expensive)
+
+
+rating - contains the place's rating, from 1.0 to 5.0, based on aggregated user reviews.
+
+
+reference - contains a token that can be used to query the Details service in future.
+
+
+reviews[] - a JSON array of up to five reviews.
+
+
+types[] - contains an array of feature types describing the given result. 
+
+
+url - contains the URL of the official Google page for this place. 
+
+
+utc_offset - contains the number of minutes this place’s current timezone is offset from UTC. 
+
+
+vicinity - lists a simplified address for the place, including the street name, street number, and locality, but not the province/state, postal code, or country. 
+
+
+website - lists the authoritative website for this place, such as a business' homepage.
+
