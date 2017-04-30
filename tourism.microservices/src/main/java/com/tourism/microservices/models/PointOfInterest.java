@@ -3,38 +3,20 @@ package com.tourism.microservices.models;
 import javax.persistence.*;
 import java.awt.*;
 import java.io.Serializable;
+import java.util.*;
+import java.util.List;
 
 /**
  * Created by apiriu on 4/28/2017.
  */
-@Entity
-@Table(name = "points_of_interests")
 public class PointOfInterest implements Serializable{
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
-    private Long id;
-
-    @Column(nullable = false)
+    private String locationId;
     private Point location;
-
-    @Column(length = 100, nullable = false)
     private String name;
-
-    @Column(length = 1000)
-    private String shortHistory;
-
-    @Column(length = 100)
-    private String imageLink;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private String description;
+    private String address;
+    private String icon;
+    private List<String> types = new ArrayList<String>();
 
     public Point getLocation() {
         return location;
@@ -52,19 +34,47 @@ public class PointOfInterest implements Serializable{
         this.name = name;
     }
 
-    public String getShortHistory() {
-        return shortHistory;
+    public String getDescription() {
+        return description;
     }
 
-    public void setShortHistory(String shortHistory) {
-        this.shortHistory = shortHistory;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getImageLink() {
-        return imageLink;
+    public String getAddress() {
+        return address;
     }
 
-    public void setImageLink(String imageLink) {
-        this.imageLink = imageLink;
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public List<String> getTypes() {
+        return types;
+    }
+
+    public void setTypes(List<String> types) {
+        this.types = types;
+    }
+
+    public void addType(String type) {
+        this.types.add(type);
+    }
+
+    public String getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(String locationId) {
+        this.locationId = locationId;
     }
 }
