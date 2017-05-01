@@ -81,18 +81,19 @@ public class TaxiController
                             {
 
                                 JSONObject poiDetail = new JSONObject(readUrl(String.format(poiDetailUrl, tempPlaceId)));
+                                poiDetail = poiDetail.getJSONObject("result");
                                 Taxi tempTaxi = new Taxi();
-                                if (!poi.isNull("name"))
+                                if (!poiDetail.isNull("name"))
                                 {
-                                    tempTaxi.setTaxiName(poi.getString("name"));
+                                    tempTaxi.setTaxiName(poiDetail.getString("name"));
                                 }
-                                if (!poi.isNull("formatted_phone_number"))
+                                if (!poiDetail.isNull("formatted_phone_number"))
                                 {
-                                    tempTaxi.setPhnoeNumber(poi.getString("formatted_phone_number"));
+                                    tempTaxi.setPhnoeNumber(poiDetail.getString("formatted_phone_number"));
                                 }
-                                if (!poi.isNull("rating"))
+                                if (!poiDetail.isNull("rating"))
                                 {
-                                    tempTaxi.setRating((float) poi.getDouble("rating"));
+                                    tempTaxi.setRating((float) poiDetail.getDouble("rating"));
                                 }
                                 pois.add(tempTaxi);
                             } catch (Exception e)
