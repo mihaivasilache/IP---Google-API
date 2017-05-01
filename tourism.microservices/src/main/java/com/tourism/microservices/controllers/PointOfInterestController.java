@@ -18,11 +18,14 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("pointsofinterest")
-public class PointOfInterestController {
+public class PointOfInterestController
+{
 
-    private static String readUrl(String urlString) throws Exception {
+    public static String readUrl(String urlString) throws Exception
+    {
         BufferedReader reader = null;
-        try {
+        try
+        {
             URL url = new URL(urlString);
             reader = new BufferedReader(new InputStreamReader(url.openStream()));
             StringBuilder buffer = new StringBuilder();
@@ -32,7 +35,8 @@ public class PointOfInterestController {
                 buffer.append(chars, 0, read);
 
             return buffer.toString();
-        } finally {
+        } finally
+        {
             if (reader != null)
                 reader.close();
         }
@@ -42,8 +46,10 @@ public class PointOfInterestController {
     @ResponseBody
     public ResponseEntity<List<PointOfInterest>> get(@RequestParam(value = "lat", required = true) Float latitude,
                                                      @RequestParam(value = "lng", required = true) Float longitude,
-                                                     @RequestParam(value = "radius", required = true) Integer radius) {
-        if (latitude == null || longitude == null || radius == null || radius <= 0) {
+                                                     @RequestParam(value = "radius", required = true) Integer radius)
+    {
+        if (latitude == null || longitude == null || radius == null || radius <= 0)
+        {
             return new ResponseEntity<List<PointOfInterest>>(HttpStatus.NOT_ACCEPTABLE);
         }
 
@@ -55,32 +61,40 @@ public class PointOfInterestController {
         List<PointOfInterest> pois = new ArrayList<PointOfInterest>();
 
         String nextPageToken;
-        try {
+        try
+        {
             boolean found = true;
             JSONObject obj = new JSONObject(readUrl(requestLink));
-            while(found) {
+            while (found)
+            {
                 String status = (String) obj.get("status");
                 long currentTime = System.currentTimeMillis();
-                if("ZERO_RESULTS".equals(status)){
+                if ("ZERO_RESULTS".equals(status))
+                {
                     found = false;
                     break;
                 }
-                while (true) {
-                    if (!"OK".equals(status)) { // try to get the link again for 10 seconds
-                        if (System.currentTimeMillis() - 10000 - currentTime >= 0) {
+                while (true)
+                {
+                    if (!"OK".equals(status))
+                    { // try to get the link again for 10 seconds
+                        if (System.currentTimeMillis() - 10000 - currentTime >= 0)
+                        {
                             break;
                         }
                         obj = new JSONObject(readUrl(requestLink));
                         status = (String) obj.get("status");
-                    }
-                    else break;
+                    } else break;
                 }
-                if(!found){
+                if (!found)
+                {
                     break;
                 }
-                try{
+                try
+                {
                     JSONArray resultList = obj.getJSONArray("results");
-                    for(int index=0; index<resultList.length(); index++){
+                    for (int index = 0; index < resultList.length(); index++)
+                    {
                         JSONObject poi = resultList.getJSONObject(index);
                         PointOfInterest poiObject = new PointOfInterest();
 
@@ -89,18 +103,23 @@ public class PointOfInterestController {
                         Point poiLocation = new Point();
                         poiLocation.setLocation(location.getDouble("lat"), location.getDouble("lng"));
                         poiObject.setLocation(poiLocation); // location set, latitude and longitude
-                        if(!poi.isNull("name")){
+                        if (!poi.isNull("name"))
+                        {
                             poiObject.setName(poi.getString("name"));
                         }
-                        if(!poi.isNull("icon")){
+                        if (!poi.isNull("icon"))
+                        {
                             poiObject.setIcon(poi.getString("icon"));
                         }
-                        if(!poi.isNull("place_id")){
+                        if (!poi.isNull("place_id"))
+                        {
                             poiObject.setLocationId(poi.getString("place_id"));
                         }
-                        if(!poi.isNull("types")){
+                        if (!poi.isNull("types"))
+                        {
                             JSONArray types = poi.getJSONArray("types");
-                            for(int i = 0; i < types.length(); i++) {
+                            for (int i = 0; i < types.length(); i++)
+                            {
                                 poiObject.addType(types.getString(i));
                             }
                         }
@@ -109,14 +128,15 @@ public class PointOfInterestController {
 
                     nextPageToken = (String) obj.get("next_page_token");
                     obj = new JSONObject(readUrl(String.format(nextPageLink, nextPageToken)));
-                }
-                catch (Exception ex) {
+                } catch (Exception ex)
+                {
                     System.out.println(ex.toString());
                     found = false;
                 }
             }
             return new ResponseEntity<List<PointOfInterest>>(pois, HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             e.printStackTrace();
         }
         return new ResponseEntity<List<PointOfInterest>>(HttpStatus.INTERNAL_SERVER_ERROR);
