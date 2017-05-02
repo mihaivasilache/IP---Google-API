@@ -1,5 +1,7 @@
 package com.tourism.microservices.models;
 
+import java.awt.*;
+import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.List;
 
@@ -13,6 +15,7 @@ public class Taxi implements Serializable
     private String phnoeNumber;
     private Integer price;
     private Float rating;
+    private Point2D.Double location;
 
     public Taxi()
     {
@@ -20,6 +23,15 @@ public class Taxi implements Serializable
         city = "";
         phnoeNumber = "";
         price = 0;
+        location = new Point2D.Double();
+    }
+
+    public Point2D.Double getLocation() {
+        return location;
+    }
+
+    public void setLocation(Point2D.Double location) {
+        this.location = location;
     }
 
     public String getTaxiName()

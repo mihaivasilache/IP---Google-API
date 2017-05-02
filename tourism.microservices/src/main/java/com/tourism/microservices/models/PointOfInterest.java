@@ -2,6 +2,7 @@ package com.tourism.microservices.models;
 
 import javax.persistence.*;
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.*;
 import java.util.List;
@@ -11,18 +12,18 @@ import java.util.List;
  */
 public class PointOfInterest implements Serializable{
     private String locationId;
-    private Point location;
+    private Point2D.Double location;
     private String name;
     private String description;
     private String address;
     private String icon;
     private List<String> types = new ArrayList<String>();
 
-    public Point getLocation() {
+    public Point2D.Double getLocation() {
         return location;
     }
 
-    public void setLocation(Point location) {
+    public void setLocation(Point2D.Double location) {
         this.location = location;
     }
 

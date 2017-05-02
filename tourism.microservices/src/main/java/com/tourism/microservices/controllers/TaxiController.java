@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
 
+import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,6 +85,12 @@ public class TaxiController
                                 JSONObject poiDetail = new JSONObject(readUrl(String.format(poiDetailUrl, tempPlaceId)));
                                 poiDetail = poiDetail.getJSONObject("result");
                                 Taxi tempTaxi = new Taxi();
+                                JSONObject location = poiDetail.getJSONObject("geometry");
+                                location = location.getJSONObject("location");
+                                Point2D.Double poiLocation = new Point2D.Double();
+                                poiLocation.setLocation(location.getDouble("lat"), location.getDouble("lng"));
+                                tempTaxi.setLocation(poiLocation); // location set, latitude and longitude
+
                                 if (!poiDetail.isNull("name"))
                                 {
                                     tempTaxi.setTaxiName(poiDetail.getString("name"));
@@ -91,6 +99,11 @@ public class TaxiController
                                 {
                                     tempTaxi.setPhnoeNumber(poiDetail.getString("formatted_phone_number"));
                                 }
+                                if (!poiDetail.isNull("rating"))
+                                {
+                                    tempTaxi.setRating((float) poiDetail.getDouble("rating"));
+                                }
+
                                 if (!poiDetail.isNull("rating"))
                                 {
                                     tempTaxi.setRating((float) poiDetail.getDouble("rating"));

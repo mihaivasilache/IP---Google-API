@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.json.*;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -100,7 +101,7 @@ public class PointOfInterestController
 
                         JSONObject location = poi.getJSONObject("geometry");
                         location = location.getJSONObject("location");
-                        Point poiLocation = new Point();
+                        Point2D.Double poiLocation = new Point2D.Double();
                         poiLocation.setLocation(location.getDouble("lat"), location.getDouble("lng"));
                         poiObject.setLocation(poiLocation); // location set, latitude and longitude
                         if (!poi.isNull("name"))
