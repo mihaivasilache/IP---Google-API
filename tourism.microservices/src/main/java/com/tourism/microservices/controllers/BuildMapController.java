@@ -1,5 +1,6 @@
 package com.tourism.microservices.controllers;
 
+import com.tourism.microservices.models.PointOfInterest;
 import org.json.HTTP;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,11 +22,21 @@ import java.util.List;
 @RequestMapping("maps")
 public class BuildMapController {
 
-    @RequestMapping(method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<String> get()
+    public String createPointContent(PointOfInterest pr)
     {
-        String response = "<!DOCTYPE html>\n" +
+        String result = "\nvar poi={}\n" +
+                "poi['location']= { lat: " + pr.getLocation().getX() + ", lng: " + pr.getLocation().getY() + "}\n"+
+                "poi['content']=" +
+                "'<div id=\"infowindow-content\">" +
+                    "<img id=\"place-icon\" src=\"" + pr.getIcon() + "\"height=\"16\" width=\"16\"><br><span id=\"place-name\"  class=\"title\">Name: " + pr.getName().replace("\'", " ").replace("\"", " ") +
+                "</span><br><span id=\"place-address\">Address: " + pr.getAddress() + "</span></div>'\n points.push(poi)\n";
+        return result;
+
+    }
+
+    public String getHtml(String pois)
+    {
+        String result = "<!DOCTYPE html>\n" +
                 "<html>\n" +
                 "  <head>\n" +
                 "    <title>Geolocation</title>\n" +
@@ -60,82 +71,78 @@ public class BuildMapController {
                 "    </style>\n" +
                 "  </head>\n" +
                 "  <body>\n" +
-                "    <div id=\"map\" style=\"max-height: 80%;\"></div>\n" +
-                "    <div id=\"infowindow-content\" class=\"hidden\">\n" +
-                "      <img id=\"place-icon\" src=\"\" height=\"16\" width=\"16\"><br>\n" +
-                "      <span id=\"place-name\"  class=\"title\"></span><br>\n" +
-                "      <span id=\"place-address\"></span>\n" +
-                "    </div>\n" +
-                "    </div>\n" +
+                "  <nav class=\"navbar navbar-inverse\">\n" +
+                "      <div class=\"container-fluid\">\n" +
+                "        <div class=\"collapse navbar-collapse\" id=\"myNavbar\">\n" +
+                "          <ul class=\"nav navbar-nav navbar-right\">\n" +
+                "              <button onclick=\"viewNext()\" class=\"btn navbar-btn\">Next</button>\n" +
+                "          </ul>\n" +
+                "          </div>\n" +
+                "        </div>\n" +
+                "        </nav>\n" +
+                " <div id=\"map\" style=\"max-height: 80%;\"></div>" +
                 "    <script>\n" +
-                "      // Note: This example requires that you consent to location sharing when\n" +
-                "      // prompted by your browser. If you see the error \"The Geolocation service\n" +
-                "      // failed.\", it means you probably did not give permission for the browser to\n" +
-                "      // locate you.\n" +
-                "      function initMap(zoom_ = 17) {\n" +
+                "    var points = [];\n" +
+                "    var counter = 1;\n" +
+                "    var markers = [];\n" +
+                "\n" + pois + "\n" +
+                "    function initMap(zoom_ = 16) {\n" +
                 "        map = new google.maps.Map(document.getElementById('map'), {\n" +
-                "          center: {lat: -34.397, lng: 150.644},\n" +
+                "          center: points[0]['location'],\n" +
                 "          zoom: zoom_\n" +
                 "        });\n" +
                 "        infoWindow = new google.maps.InfoWindow;\n" +
-                "      \t\n" +
-                "        // Try HTML5 geolocation.\n" +
-                "        // if (navigator.geolocation) {\n" +
-                "        //   navigator.geolocation.getCurrentPosition(function(position) {\n" +
-                "        //     var pos = {\n" +
-                "        //       lat: position.coords.latitude,\n" +
-                "        //       lng: position.coords.longitude\n" +
-                "        //     };\n" +
-                "        //     origin.lat = pos.lat;\n" +
-                "        //     origin.lng = pos.lng;\n" +
-                "        //     map.addListener('dblclick', function(event) {\n" +
-                "        //         addMarker(event.latLng);\n" +
-                "        //     });\n" +
-                "            \n" +
-                "        //     infoWindow.setPosition(pos);\n" +
-                "        //     infoWindow.setContent('Location found.');\n" +
-                "        //     infoWindow.open(map);\n" +
-                "        //     map.setCenter(pos);\n" +
-                "        //   }, function() {\n" +
-                "        //     handleLocationError(true, infoWindow, map.getCenter());\n" +
-                "        //   });\n" +
-                "        // } else {\n" +
-                "        //   // Browser doesn't support Geolocation\n" +
-                "        //   handleLocationError(false, infoWindow, map.getCenter());\n" +
-                "        // }\n" +
+                "        infoWindow.open(map)\n" +
+                "        infoWindow.setPosition(points[0]['location'])\n" +
+                "        infoWindow.setContent(points[0]['content'])\n" +
+                " addMarker(points[0]['location'])"+
+                "        \n" +
                 "      }\n" +
-                "      function addMarker(location) {\n" +
+                "\n" +
+                "           \n" +
+                "      function viewNext()\n" +
+                "      {\n" +
+                "\n" +
+                "\n" +
+                "        if (counter == points.length)\n" +
+                "        {\n" +
+                "          counter = 0\n" +
+                "        }\n" +
+                "\n" +
+                "        console.log(counter)\n" +
+                "        console.log(points[counter])\n" +
+                "        map.setCenter(points[counter]['location'])\n" +
+                "        infoWindow.setPosition(points[counter]['location'])\n" +
+                "        infoWindow.setContent(points[counter]['content'])\n" +
+                "        counter = counter + 1\n" +
+                " addMarker(points[counter]['location'])"+
+                "      }\n" +
+                "            \n" +
+                "function addMarker(location) {\n" +
                 "        var marker = new google.maps.Marker({\n" +
                 "          position: location,\n" +
                 "          map: map\n" +
                 "        });\n" +
                 "        markers.push(marker);\n" +
-                "      }\n" +
-                "\n" +
-                "      ClickEventHandler.prototype.calculateAndDisplayRoute = function(placeId) {\n" +
-                "        var me = this;\n" +
-                "        this.directionsService.route({\n" +
-                "          origin: this.origin,\n" +
-                "          destination: {placeId: placeId},\n" +
-                "          travelMode: 'WALKING'\n" +
-                "        }, function(response, status) {\n" +
-                "          if (status === 'OK') {\n" +
-                "            me.directionsDisplay.setDirections(response);\n" +
-                "          } else {\n" +
-                "            window.alert('Directions request failed due to ' + status);\n" +
-                "          }\n" +
-                "        });\n" +
-                "      };\n" +
-                "\n" +
-                "      \n" +
+                "      }" +
                 "    </script>\n" +
-                "    <!-- <script async defer\n" +
-                "    src=\"https://maps.googleapis.com/maps/api/js?key=AIzaSyDXYDYmpNXAo01aw71oMT6KJXoI1aTTyvg&libraries=places&callback=initMap\">\n" +
-                "    </script> -->\n" +
                 "    <script src=\"https://maps.googleapis.com/maps/api/js?key=AIzaSyDXYDYmpNXAo01aw71oMT6KJXoI1aTTyvg&libraries=places&callback=initMap\"\n" +
                 "        async defer></script>\n" +
                 "  </body>\n" +
                 "</html>";
+        return result;
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<String> get(@RequestBody List<PointOfInterest> poisList)
+    {
+        String response = "";
+        for (PointOfInterest cs : poisList)
+        {
+            response += createPointContent(cs);
+        }
+        response = getHtml(response);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }
