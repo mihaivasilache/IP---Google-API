@@ -12,11 +12,13 @@ import java.util.List;
  */
 public class PointOfInterest implements Serializable{
     private String locationId;
-    private Point2D.Double location;
     private String name;
     private String description;
+    private String formattedNumber;
     private String address;
     private String icon;
+
+    private Point2D.Double location;
     private List<String> types = new ArrayList<String>();
 
     public Point2D.Double getLocation() {
@@ -77,5 +79,13 @@ public class PointOfInterest implements Serializable{
 
     public void setLocationId(String locationId) {
         this.locationId = locationId;
+    }
+
+    public String getFormattedNumber() {
+        return formattedNumber;
+    }
+
+    public void setFormattedNumber(String formattedNumber) {
+        this.formattedNumber = formattedNumber;
     }
 }

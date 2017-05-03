@@ -1,5 +1,6 @@
 package com.tourism.microservices.controllers;
 
+import com.google.gson.JsonElement;
 import com.tourism.microservices.models.PointOfInterest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -141,6 +142,59 @@ public class PointOfInterestController
             e.printStackTrace();
         }
         return new ResponseEntity<List<PointOfInterest>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @RequestMapping(value = "/{placeid}", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<PointOfInterest> getDetail(@PathVariable(value = "placeid") String placeId) {
+        System.out.println(placeId);
+        PointOfInterest poi = new PointOfInterest();
+
+        String poiDetailUrl = "https://maps.googleapis.com/maps/api/place/details/json?placeid=%s&language=en&key=AIzaSyCWAxJGAVwwJG4ugVA7BZX-1QHUQ2XwkVU";
+        try {
+            JSONObject jAnswer = new JSONObject(readUrl(String.format(poiDetailUrl, placeId)));
+            JSONObject jResult = jAnswer.getJSONObject("result");
+            if(!jAnswer.getString("status").equalsIgnoreCase("OK")){
+                throw new Exception("received answer from google is not valid!");
+            }
+            try{
+                poi.setFormattedNumber(jResult.getString("international_phone_number"));
+            }catch(JSONException e){}
+            try{
+                poi.setFormattedNumber(jResult.getString("international_phone_number"));
+            }catch(JSONException e){}
+            try{
+                poi.setName(jResult.getString("name"));
+            }catch(JSONException e){}
+            try{
+                poi.setDescription(jResult.getString("scope"));
+            }catch(JSONException e){}
+            try{
+                poi.setAddress(jResult.getString("formatted_address"));
+            }catch(JSONException e){}
+            try{
+                poi.setIcon(jResult.getString("icon"));
+            }catch(JSONException e){}
+            try{
+                poi.setLocationId(jResult.getString("place_id"));
+            }catch(JSONException e){}
+
+            try{
+                JSONArray jTypes = jResult.getJSONArray("types");
+                for(int i=0; i<jTypes.length(); i++){
+                    poi.addType(jTypes.getString(i));
+                }
+            }catch(JSONException e){}
+
+            try{
+                JSONObject jLocation = jResult.getJSONObject("geometry").getJSONObject("location");
+                poi.setLocation(new Point2D.Double(jLocation.getDouble("lat"), jLocation.getDouble("lng")));
+            }catch(JSONException e){}
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return new ResponseEntity<PointOfInterest>(poi, HttpStatus.OK);
     }
 
 }
