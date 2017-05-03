@@ -1,6 +1,5 @@
 package com.tourism.microservices.controllers;
 
-import com.google.gson.JsonElement;
 import com.tourism.microservices.models.PointOfInterest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

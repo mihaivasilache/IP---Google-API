@@ -89,6 +89,10 @@ public class TaxiController {
                                     if (!poiDetail.isNull("rating")) {
                                         tempTaxi.setRating((float) poiDetail.getDouble("rating"));
                                     }
+                                    else
+                                    {
+                                        tempTaxi.setRating(0f);
+                                    }
                                     pois.add(tempTaxi);
                                 }
                             } catch (Exception e) {
@@ -111,6 +115,8 @@ public class TaxiController {
                 public int compare(Taxi o1, Taxi o2) {
                     if(o1.getRating() > o2.getRating())
                         return -1;
+                    else if(o1.getRating() == o2.getRating())
+                        return 0;
                     else return 1;
                 }
             });
