@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.tourism.microservices.controllers.PointOfInterestController.readUrl;
@@ -88,10 +89,6 @@ public class TaxiController {
                                     if (!poiDetail.isNull("rating")) {
                                         tempTaxi.setRating((float) poiDetail.getDouble("rating"));
                                     }
-
-                                    if (!poiDetail.isNull("rating")) {
-                                        tempTaxi.setRating((float) poiDetail.getDouble("rating"));
-                                    }
                                     pois.add(tempTaxi);
                                 }
                             } catch (Exception e) {
@@ -109,6 +106,14 @@ public class TaxiController {
                     found = false;
                 }
             }
+            pois.sort(new Comparator<Taxi>() {
+                @Override
+                public int compare(Taxi o1, Taxi o2) {
+                    if(o1.getRating() > o2.getRating())
+                        return -1;
+                    else return 1;
+                }
+            });
             return new ResponseEntity<List<Taxi>>(pois, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
