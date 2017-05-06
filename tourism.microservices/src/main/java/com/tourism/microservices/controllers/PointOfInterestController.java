@@ -47,11 +47,18 @@ public class PointOfInterestController
     @ResponseBody
     public ResponseEntity<List<PointOfInterest>> get(@RequestParam(value = "lat", required = true) Float latitude,
                                                      @RequestParam(value = "lng", required = true) Float longitude,
-                                                     @RequestParam(value = "radius", required = true) Integer radius)
+                                                     @RequestParam(value = "radius", required = true) Integer radius,
+                                                     @RequestHeader(value = "types", required = false) String poiTypes)
     {
         if (latitude == null || longitude == null || radius == null || radius <= 0)
         {
             return new ResponseEntity<List<PointOfInterest>>(HttpStatus.NOT_ACCEPTABLE);
+        }
+        List<String> typeList = new ArrayList<String>();
+        if(poiTypes != null) {
+            if (poiTypes.length() > 0) {
+                typeList = Arrays.asList(poiTypes.split("\\s*,\\s*"));
+            }
         }
 
         String apiKey = "AIzaSyDXYDYmpNXAo01aw71oMT6KJXoI1aTTyvg";
@@ -124,11 +131,29 @@ public class PointOfInterestController
                                 poiObject.addType(types.getString(i));
                             }
                         }
+                        if(typeList.size() > 0 && poiObject.getTypes().size() > 0) {
+                            boolean foundType = false;
+                            for(String type : poiObject.getTypes()) {
+                                if(typeList.contains(type)) {
+                                    foundType = true;
+                                    break;
+                                }
+                            }
+                            if(!foundType){
+                                continue;
+                            }
+                        }
+
                         pois.add(poiObject);
                     }
 
-                    nextPageToken = (String) obj.get("next_page_token");
-                    obj = new JSONObject(readUrl(String.format(nextPageLink, nextPageToken)));
+                    if(!obj.isNull("next_page_token")) {
+                        nextPageToken = (String) obj.get("next_page_token");
+                        obj = new JSONObject(readUrl(String.format(nextPageLink, nextPageToken)));
+                    }
+                    else {
+                        break;
+                    }
                 } catch (Exception ex)
                 {
                     System.out.println(ex.toString());
