@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Geolocation</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+      <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-social/5.1.1/bootstrap-social.css">
+
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script> 
+        var map, infoWindow;
+    	var origin = {lat: -34.397, lng: 150.644};
+	    var origin2;
+        </script>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }  
+    </style>
+  </head>
+  <body>
+  <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="myNavbar">
+          <ul class="nav navbar-nav navbar-right">
+              <button onclick="viewNext()" class="btn navbar-btn">Next</button>
+          </ul>
+          </div>
+        </div>
+        </nav>
+ <div id="map" style="max-height: 80%;"></div>    <script>
+    var points = [];
+    var counter = 1;
+    var markers = [];
+
+
+var poi={}
+poi['location']= { lat: 37.3382082, lng: -121.8863286}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/geocode-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: San Jose</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.3309011, lng: -121.8876456}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: The Westin San Jose Hotel</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.301841, lng: -121.857765}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Hampton Inn & Suites San Jose</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.318229, lng: -121.8764143}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Hotel Elan San Jose</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.32018289999999, lng: -121.830271}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Best Western Lanai Garden Inn & Suites</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.317148, lng: -121.828493}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Motel 6</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.3304071, lng: -121.8882218}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: San Jose Marriott</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.329187, lng: -121.890499}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Hilton San Jose</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.3302372, lng: -121.8913053}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Hyatt Place San Jose/Downtown</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.3329668, lng: -121.889196}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Fairmont San Jose Hotel</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.3342568, lng: -121.8949638}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Hotel De Anza</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.3319164, lng: -121.9063867}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Arena Hotel</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.262307, lng: -121.820318}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Hayes Mansion</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.3404459, lng: -121.9216222}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Hotel Rose Garden</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.29313499999999, lng: -121.935925}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Courtyard by Marriott San Jose Campbell</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.3230842, lng: -121.93643}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: The Row Hotel</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.2878171, lng: -121.9372039}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Campbell Inn</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.2864286, lng: -121.9380515}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: TownePlace Suites by Marriott San Jose Campbell</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.360583, lng: -121.908016}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Caravelle Inn & Suites</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.5482697, lng: -121.9885719}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/geocode-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Fremont</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.320847, lng: -121.9480939}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Hotel Valencia Santana Row</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.3656746, lng: -121.9179764}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Courtyard by Marriott San Jose Airport</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.3523853, lng: -121.9354157}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Candlewood Suites Silicon Valley/San Jose</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.3724103, lng: -121.911115}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Staybridge Suites San Jose</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.3707188, lng: -121.9174277}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Fairfield Inn & Suites by Marriott San Jose Airport</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.2937321, lng: -121.9598436}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Larkspur Landing Campbell</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.3718511, lng: -121.9227015}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: DoubleTree by Hilton Hotel San Jose</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.352084, lng: -121.956043}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Holiday Inn Express & Suites Santa Clara</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.31957209999999, lng: -121.9716885}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: TownePlace Suites by Marriott San Jose Cupertino</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.3165716, lng: -121.977219}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Aloft San Jose Cupertino</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.3781241, lng: -121.939033}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: La Quinta Inn & Suites San Jose Airport</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.3528568, lng: -121.9715226}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Granada Inn - Silicon Valley</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.2349574, lng: -121.775286}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Extended Stay America - San Jose - Edenvale - North</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.40057999999999, lng: -121.911766}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Sonesta Silicon Valley</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.2339529, lng: -121.7736027}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Residence Inn by Marriott San Jose South</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.3514571, lng: -121.9797104}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Quality Inn & Suites Silicon Valley</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+var poi={}
+poi['location']= { lat: 37.41151999999999, lng: -121.8929995}
+poi['content']='<div id="infowindow-content"><img id="place-icon" src="https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png"height="16" width="16"><br><span id="place-name"  class="title">Name: Courtyard by Marriott Milpitas Silicon Valley</span><br><span id="place-address">Address: null</span></div>'
+ points.push(poi)
+
+    function initMap(zoom_ = 16) {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: points[0]['location'],
+          zoom: zoom_
+        });
+        infoWindow = new google.maps.InfoWindow;
+        infoWindow.open(map)
+        infoWindow.setPosition(points[0]['location'])
+        infoWindow.setContent(points[0]['content'])
+ addMarker(points[0]['location'])        
+      }
+
+           
+      function viewNext()
+      {
+
+
+        if (counter == points.length)
+        {
+          counter = 0
+        }
+
+        console.log(counter)
+        console.log(points[counter])
+        map.setCenter(points[counter]['location'])
+        infoWindow.setPosition(points[counter]['location'])
+        infoWindow.setContent(points[counter]['content'])
+        counter = counter + 1
+ addMarker(points[counter]['location'])      }
+            
+function addMarker(location) {
+        var marker = new google.maps.Marker({
+          position: location,
+          map: map
+        });
+        markers.push(marker);
+      }    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXYDYmpNXAo01aw71oMT6KJXoI1aTTyvg&libraries=places&callback=initMap"
+        async defer></script>
+  </body>
+</html>

@@ -1,6 +1,7 @@
 package com.tourism.microservices.controllers;
 
 import com.tourism.microservices.models.PointOfInterest;
+import com.tourism.microservices.models.RouteStep;
 import org.json.HTTP;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,7 +35,27 @@ public class BuildMapController {
 
     }
 
-    public String getHtml(String pois)
+    public String createStepContent(RouteStep pr)
+    {
+        String result = "\nvar step={}\n" +
+                "step['start_location']= { lat: " + pr.getStartLocation().getX() + ", lng: " + pr.getStartLocation().getY() + "}\n"+
+                "step['end_location']= { lat: " + pr.getEndLocation().getX() + ", lng: " + pr.getEndLocation().getY() + "}\n"+
+                "step['instruction']=" + pr.getInstructions() + "\n" +
+                "step['distance']=" + pr.getDistance() + "\n" +
+                "step['duration']=" + pr.getDuration() + "\n " +
+                "step['travel_mode']=" + pr.getTravelMode() + "\n " +
+                " points.push(step)\n";
+        return result;
+    }
+
+    public String getRouteHtml(String steps)
+    {
+        String result = "";
+        result = steps;
+        return result;
+    }
+
+    public String getPointHtml(String pois)
     {
         String result = "<!DOCTYPE html>\n" +
                 "<html>\n" +
@@ -133,16 +154,29 @@ public class BuildMapController {
         return result;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/points", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<String> get(@RequestBody List<PointOfInterest> poisList)
+    public ResponseEntity<String> getPoints(@RequestBody List<PointOfInterest> poisList)
     {
         String response = "";
         for (PointOfInterest cs : poisList)
         {
             response += createPointContent(cs);
         }
-        response = getHtml(response);
+        response = getPointHtml(response);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/route", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<String> getRoute(@RequestBody List<RouteStep> steps)
+    {
+        String response = "";
+        for (RouteStep rd : steps)
+        {
+            response += createStepContent(rd);
+        }
+        response = getRouteHtml(response);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }
