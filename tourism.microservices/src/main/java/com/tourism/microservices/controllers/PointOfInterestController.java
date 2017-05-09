@@ -20,14 +20,11 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("pointsofinterest")
-public class PointOfInterestController
-{
+public class PointOfInterestController {
 
-    public static String readUrl(String urlString) throws Exception
-    {
+    public static String readUrl(String urlString) throws Exception {
         BufferedReader reader = null;
-        try
-        {
+        try {
             URL url = new URL(urlString);
             reader = new BufferedReader(new InputStreamReader(url.openStream()));
             StringBuilder buffer = new StringBuilder();
@@ -37,8 +34,7 @@ public class PointOfInterestController
                 buffer.append(chars, 0, read);
 
             return buffer.toString();
-        } finally
-        {
+        } finally {
             if (reader != null)
                 reader.close();
         }
@@ -49,14 +45,12 @@ public class PointOfInterestController
     public ResponseEntity<List<PointOfInterest>> get(@RequestParam(value = "lat", required = true) Float latitude,
                                                      @RequestParam(value = "lng", required = true) Float longitude,
                                                      @RequestParam(value = "radius", required = true) Integer radius,
-                                                     @RequestHeader(value = "types", required = false) String poiTypes)
-    {
-        if (latitude == null || longitude == null || radius == null || radius <= 0)
-        {
+                                                     @RequestHeader(value = "types", required = false) String poiTypes) {
+        if (latitude == null || longitude == null || radius == null || radius <= 0) {
             return new ResponseEntity<List<PointOfInterest>>(HttpStatus.NOT_ACCEPTABLE);
         }
         List<String> typeList = new ArrayList<String>();
-        if(poiTypes != null) {
+        if (poiTypes != null) {
             if (poiTypes.length() > 0) {
                 typeList = Arrays.asList(poiTypes.split("\\s*,\\s*"));
             }
@@ -70,40 +64,31 @@ public class PointOfInterestController
         List<PointOfInterest> pois = new ArrayList<PointOfInterest>();
 
         String nextPageToken;
-        try
-        {
+        try {
             boolean found = true;
             JSONObject obj = new JSONObject(readUrl(requestLink));
-            while (found)
-            {
+            while (found) {
                 String status = (String) obj.get("status");
                 long currentTime = System.currentTimeMillis();
-                if ("ZERO_RESULTS".equals(status))
-                {
+                if ("ZERO_RESULTS".equals(status)) {
                     found = false;
                     break;
                 }
-                while (true)
-                {
-                    if (!"OK".equals(status))
-                    { // try to get the link again for 10 seconds
-                        if (System.currentTimeMillis() - 10000 - currentTime >= 0)
-                        {
+                while (true) {
+                    if (!"OK".equals(status)) { // try to get the link again for 10 seconds
+                        if (System.currentTimeMillis() - 10000 - currentTime >= 0) {
                             break;
                         }
                         obj = new JSONObject(readUrl(requestLink));
                         status = (String) obj.get("status");
                     } else break;
                 }
-                if (!found)
-                {
+                if (!found) {
                     break;
                 }
-                try
-                {
+                try {
                     JSONArray resultList = obj.getJSONArray("results");
-                    for (int index = 0; index < resultList.length(); index++)
-                    {
+                    for (int index = 0; index < resultList.length(); index++) {
                         JSONObject poi = resultList.getJSONObject(index);
                         PointOfInterest poiObject = new PointOfInterest();
 
@@ -112,35 +97,30 @@ public class PointOfInterestController
                         Point2D.Double poiLocation = new Point2D.Double();
                         poiLocation.setLocation(location.getDouble("lat"), location.getDouble("lng"));
                         poiObject.setLocation(poiLocation); // location set, latitude and longitude
-                        if (!poi.isNull("name"))
-                        {
+                        if (!poi.isNull("name")) {
                             poiObject.setName(poi.getString("name"));
                         }
-                        if (!poi.isNull("icon"))
-                        {
+                        if (!poi.isNull("icon")) {
                             poiObject.setIcon(poi.getString("icon"));
                         }
-                        if (!poi.isNull("place_id"))
-                        {
+                        if (!poi.isNull("place_id")) {
                             poiObject.setLocationId(poi.getString("place_id"));
                         }
-                        if (!poi.isNull("types"))
-                        {
+                        if (!poi.isNull("types")) {
                             JSONArray types = poi.getJSONArray("types");
-                            for (int i = 0; i < types.length(); i++)
-                            {
+                            for (int i = 0; i < types.length(); i++) {
                                 poiObject.addType(types.getString(i));
                             }
                         }
-                        if(typeList.size() > 0 && poiObject.getTypes().size() > 0) {
+                        if (typeList.size() > 0 && poiObject.getTypes().size() > 0) {
                             boolean foundType = false;
-                            for(String type : poiObject.getTypes()) {
-                                if(typeList.contains(type)) {
+                            for (String type : poiObject.getTypes()) {
+                                if (typeList.contains(type)) {
                                     foundType = true;
                                     break;
                                 }
                             }
-                            if(!foundType){
+                            if (!foundType) {
                                 continue;
                             }
                         }
@@ -148,85 +128,115 @@ public class PointOfInterestController
                         pois.add(poiObject);
                     }
 
-                    if(!obj.isNull("next_page_token")) {
+                    if (!obj.isNull("next_page_token")) {
                         nextPageToken = (String) obj.get("next_page_token");
                         obj = new JSONObject(readUrl(String.format(nextPageLink, nextPageToken)));
-                    }
-                    else {
+                    } else {
                         break;
                     }
-                } catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     System.out.println(ex.toString());
                     found = false;
                 }
             }
             return new ResponseEntity<List<PointOfInterest>>(pois, HttpStatus.OK);
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return new ResponseEntity<List<PointOfInterest>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @RequestMapping(value = "/{placeid}", method = RequestMethod.GET)
+    @RequestMapping(value = {"/{placeid}/{key}", "/{placeid}"}, method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<PointOfInterest> getDetail(@PathVariable(value = "placeid") String placeId) {
+    public ResponseEntity<Object> getDetail(@PathVariable(value = "placeid") String placeId,
+                                            @PathVariable(value = "key", required = false) String key) {
         System.out.println(placeId);
         PointOfInterest poi = new PointOfInterest();
+        boolean keyIsSpecified = (key != null && !key.isEmpty());
 
         String poiDetailUrl = "https://maps.googleapis.com/maps/api/place/details/json?placeid=%s&language=en&key=AIzaSyCWAxJGAVwwJG4ugVA7BZX-1QHUQ2XwkVU";
         try {
             JSONObject jAnswer = new JSONObject(readUrl(String.format(poiDetailUrl, placeId)));
             JSONObject jResult = jAnswer.getJSONObject("result");
-            if(!jAnswer.getString("status").equalsIgnoreCase("OK")){
+            if (!jAnswer.getString("status").equalsIgnoreCase("OK")) {
                 throw new Exception("received answer from google is not valid!");
             }
-            try{
+
+            try {
                 poi.setFormattedNumber(jResult.getString("international_phone_number"));
-            }catch(JSONException e){}
-            try{
-                poi.setFormattedNumber(jResult.getString("international_phone_number"));
-            }catch(JSONException e){}
-            try{
+                if (keyIsSpecified && key.equalsIgnoreCase("formattedNumber"))
+                    return new ResponseEntity<>(poi.getFormattedNumber(), HttpStatus.OK);
+            } catch (JSONException e) {
+            }
+            try {
                 poi.setName(jResult.getString("name"));
-            }catch(JSONException e){}
-            try{
+                if (keyIsSpecified && key.equalsIgnoreCase("name"))
+                    return new ResponseEntity<>(poi.getName(), HttpStatus.OK);
+            } catch (JSONException e) {
+            }
+            try {
                 poi.setDescription(jResult.getString("scope"));
-            }catch(JSONException e){}
-            try{
+                if (keyIsSpecified && key.equalsIgnoreCase("description"))
+                    return new ResponseEntity<>(poi.getDescription(), HttpStatus.OK);
+            } catch (JSONException e) {
+            }
+            try {
                 poi.setAddress(jResult.getString("formatted_address"));
-            }catch(JSONException e){}
-            try{
+                if (keyIsSpecified && key.equalsIgnoreCase("address"))
+                    return new ResponseEntity<>(poi.getAddress(), HttpStatus.OK);
+            } catch (JSONException e) {
+            }
+            try {
                 poi.setIcon(jResult.getString("icon"));
-            }catch(JSONException e){}
-            try{
+                if (keyIsSpecified && key.equalsIgnoreCase("icon"))
+                    return new ResponseEntity<>(poi.getIcon(), HttpStatus.OK);
+            } catch (JSONException e) {
+            }
+            try {
                 poi.setLocationId(jResult.getString("place_id"));
-            }catch(JSONException e){}
+                if (keyIsSpecified && key.equalsIgnoreCase("locationId"))
+                    return new ResponseEntity<>(poi.getLocationId(), HttpStatus.OK);
+            } catch (JSONException e) {
+            }
 
-            try{
+            try {
                 poi.setRating(jResult.getDouble("rating"));
-            }catch(JSONException e){}
+                if (keyIsSpecified && key.equalsIgnoreCase("rating"))
+                    return new ResponseEntity<>(poi.getRating(), HttpStatus.OK);
+            } catch (JSONException e) {
+            }
 
-            try{
+            try {
                 poi.setReference(jResult.getString("reference"));
-            }catch(JSONException e){}
+                if (keyIsSpecified && key.equalsIgnoreCase("reference"))
+                    return new ResponseEntity<>(poi.getReference(), HttpStatus.OK);
+            } catch (JSONException e) {
+            }
 
-            try{
+            try {
                 poi.setUrl(jResult.getString("url"));
-            }catch(JSONException e){}
+                if (keyIsSpecified && key.equalsIgnoreCase("url"))
+                    return new ResponseEntity<>(poi.getUrl(), HttpStatus.OK);
+            } catch (JSONException e) {
+            }
 
-            try{
+            try {
                 poi.setVicinity(jResult.getString("vicinity"));
-            }catch(JSONException e){}
+                if (keyIsSpecified && key.equalsIgnoreCase("vicinity"))
+                    return new ResponseEntity<>(poi.getVicinity(), HttpStatus.OK);
+            } catch (JSONException e) {
+            }
 
-            try{
+            try {
                 poi.setWebsite(jResult.getString("website"));
-            }catch(JSONException e){}
+                if (keyIsSpecified && key.equalsIgnoreCase("website"))
+                    return new ResponseEntity<>(poi.getWebsite(), HttpStatus.OK);
+            } catch (JSONException e) {
+            }
 
-            try{
+            try {
                 JSONObject jReviewField = jResult.getJSONObject("reviews");
-                for(int i=0; i<jResult.length(); i++){
+                for (int i = 0; i < jResult.length(); i++) {
                     poiReview review = new poiReview();
                     review.setAuthor(jReviewField.getString("author"));
                     review.setAuthorURL(jReviewField.getString("author_url"));
@@ -236,24 +246,33 @@ public class PointOfInterestController
                     review.setTime(jReviewField.getDouble("time"));
                     poi.addReview(review);
                 }
-            }catch(JSONException e) {}
+                if (keyIsSpecified && key.equalsIgnoreCase("reviews"))
+                    return new ResponseEntity<>(poi.getReviews(), HttpStatus.OK);
+            } catch (JSONException e) {
+            }
 
-            try{
+            try {
                 JSONArray jTypes = jResult.getJSONArray("types");
-                for(int i=0; i<jTypes.length(); i++){
+                for (int i = 0; i < jTypes.length(); i++) {
                     poi.addType(jTypes.getString(i));
                 }
-            }catch(JSONException e){}
+                if (keyIsSpecified && key.equalsIgnoreCase("types"))
+                    return new ResponseEntity<>(poi.getTypes(), HttpStatus.OK);
+            } catch (JSONException e) {
+            }
 
-            try{
+            try {
                 JSONObject jLocation = jResult.getJSONObject("geometry").getJSONObject("location");
                 poi.setLocation(new Point2D.Double(jLocation.getDouble("lat"), jLocation.getDouble("lng")));
-            }catch(JSONException e){}
+                if (!keyIsSpecified && key.equalsIgnoreCase(""))
+                    return new ResponseEntity<>(poi.getLocation(), HttpStatus.OK);
+            } catch (JSONException e) {
+            }
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return new ResponseEntity<PointOfInterest>(poi, HttpStatus.OK);
+        return new ResponseEntity<>(poi, HttpStatus.OK);
     }
 
 }
