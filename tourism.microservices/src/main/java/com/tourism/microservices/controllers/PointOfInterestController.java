@@ -1,6 +1,7 @@
 package com.tourism.microservices.controllers;
 
 import com.tourism.microservices.models.PointOfInterest;
+import com.tourism.microservices.models.poiReview;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -202,6 +203,40 @@ public class PointOfInterestController
             try{
                 poi.setLocationId(jResult.getString("place_id"));
             }catch(JSONException e){}
+
+            try{
+                poi.setRating(jResult.getDouble("rating"));
+            }catch(JSONException e){}
+
+            try{
+                poi.setReference(jResult.getString("reference"));
+            }catch(JSONException e){}
+
+            try{
+                poi.setUrl(jResult.getString("url"));
+            }catch(JSONException e){}
+
+            try{
+                poi.setVicinity(jResult.getString("vicinity"));
+            }catch(JSONException e){}
+
+            try{
+                poi.setWebsite(jResult.getString("website"));
+            }catch(JSONException e){}
+
+            try{
+                JSONObject jReviewField = jResult.getJSONObject("reviews");
+                for(int i=0; i<jResult.length(); i++){
+                    poiReview review = new poiReview();
+                    review.setAuthor(jReviewField.getString("author"));
+                    review.setAuthorURL(jReviewField.getString("author_url"));
+                    review.setLanguage(jReviewField.getString("language"));
+                    review.setRating(jReviewField.getDouble("rating"));
+                    review.setText(jReviewField.getString("text"));
+                    review.setTime(jReviewField.getDouble("time"));
+                    poi.addReview(review);
+                }
+            }catch(JSONException e) {}
 
             try{
                 JSONArray jTypes = jResult.getJSONArray("types");
