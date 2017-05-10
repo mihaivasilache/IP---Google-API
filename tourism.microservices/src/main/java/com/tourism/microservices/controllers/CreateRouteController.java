@@ -63,6 +63,7 @@ public class CreateRouteController {
                 Point2D.Double tempPoint = new Point2D.Double();
                 tempPoint.setLocation(stepObject.getJSONObject("start_location").getDouble("lat"), stepObject.getJSONObject("start_location").getDouble("lng"));
                 tempStep.setStartLocation(tempPoint);
+                tempPoint = new Point2D.Double();
                 tempPoint.setLocation(stepObject.getJSONObject("end_location").getDouble("lat"), stepObject.getJSONObject("end_location").getDouble("lng"));
                 tempStep.setEndLocation(tempPoint);
                 stepsList.add(tempStep);

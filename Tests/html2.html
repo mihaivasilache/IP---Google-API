@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Geolocation</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+      <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-social/5.1.1/bootstrap-social.css">
+
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script> 
+        var map, infoWindow;
+    	var origin = {lat: -34.397, lng: 150.644};
+	    var origin2;
+        </script>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }  
+    </style>
+  </head>
+  <body>
+  <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="myNavbar">
+
+          <ul class="nav navbar-nav navbar-left">
+          		<button onclick="viewPrevious()" class="btn navbar-btn">Previous</button>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+              <button onclick="viewNext()" class="btn navbar-btn">Next</button>
+          </ul>
+          
+         </div>
+       </div>
+   </nav>
+   <div class="well" id="stepsDisplay">Step: 0 / 0</div>
+ <div id="map" style="max-height: 80%;"></div>  
+   <script>
+    var points = [];
+    var counter = 1;
+    var markers = [];
+    var directionsService;
+    var directionsDisplay;
+
+
+var step={}
+step['start_location']= { lat: 37.3382088, lng: -121.8863279}
+step['end_location']= { lat: 37.3406964, lng: -121.8810378}
+step['instruction']='Head <b>northeast</b> on <b>E Santa Clara St</b> toward <b>N 6th St</b>'
+step['distance']='0.3 mi'
+step['duration']='2 mins'
+ step['travel_mode']='DRIVING'
+  points.push(step)
+
+var step={}
+step['start_location']= { lat: 37.3406964, lng: -121.8810378}
+step['end_location']= { lat: 37.3279105, lng: -121.8715508}
+step['instruction']='Turn <b>right</b> onto <b>S 10th St</b>'
+step['distance']='1.0 mi'
+step['duration']='3 mins'
+ step['travel_mode']='DRIVING'
+  points.push(step)
+
+var step={}
+step['start_location']= { lat: 37.3279105, lng: -121.8715508}
+step['end_location']= { lat: 37.3280965, lng: -121.8708266}
+step['instruction']='Turn <b>left</b> toward <b>I-280 S</b>'
+step['distance']='220 ft'
+step['duration']='1 min'
+ step['travel_mode']='DRIVING'
+  points.push(step)
+
+var step={}
+step['start_location']= { lat: 37.3280965, lng: -121.8708266}
+step['end_location']= { lat: 37.3294381, lng: -121.8684964}
+step['instruction']='Take the <b>Interstate 280 S</b> ramp to <b>U.S. 101</b>'
+step['distance']='0.2 mi'
+step['duration']='1 min'
+ step['travel_mode']='DRIVING'
+  points.push(step)
+
+var step={}
+step['start_location']= { lat: 37.3294381, lng: -121.8684964}
+step['end_location']= { lat: 37.336442, lng: -121.8568852}
+step['instruction']='Merge onto <b>I-280 S</b>'
+step['distance']='0.8 mi'
+step['duration']='1 min'
+ step['travel_mode']='DRIVING'
+  points.push(step)
+
+var step={}
+step['start_location']= { lat: 37.336442, lng: -121.8568852}
+step['end_location']= { lat: 37.4095275, lng: -121.8787525}
+step['instruction']='Continue onto <b>I-680 N</b>'
+step['distance']='6.2 mi'
+step['duration']='6 mins'
+ step['travel_mode']='DRIVING'
+  points.push(step)
+
+var step={}
+step['start_location']= { lat: 37.4095275, lng: -121.8787525}
+step['end_location']= { lat: 37.4119648, lng: -121.8792813}
+step['instruction']='Take the <b>Montague Expy</b>/<b>landess Ave</b> exit'
+step['distance']='0.2 mi'
+step['duration']='1 min'
+ step['travel_mode']='DRIVING'
+  points.push(step)
+
+var step={}
+step['start_location']= { lat: 37.4119648, lng: -121.8792813}
+step['end_location']= { lat: 37.4150609, lng: -121.8802097}
+step['instruction']='Keep <b>left</b> to continue toward <b>Landess Ave</b>/<b>Montague Expy</b>'
+step['distance']='0.2 mi'
+step['duration']='1 min'
+ step['travel_mode']='DRIVING'
+  points.push(step)
+
+var step={}
+step['start_location']= { lat: 37.4150609, lng: -121.8802097}
+step['end_location']= { lat: 37.4147283, lng: -121.8796596}
+step['instruction']='Keep <b>right</b> at the fork, follow signs for <b>Montague Expy</b>/<b>Heald College</b>'
+step['distance']='0.1 mi'
+step['duration']='1 min'
+ step['travel_mode']='DRIVING'
+  points.push(step)
+
+var step={}
+step['start_location']= { lat: 37.4147283, lng: -121.8796596}
+step['end_location']= { lat: 37.41086920000001, lng: -121.8929124}
+step['instruction']='Continue onto <b>Landess Ave</b>/<b>Montague Expy</b><div style="font-size:0.9em">Continue to follow Montague Expy</div>'
+step['distance']='0.8 mi'
+step['duration']='2 mins'
+ step['travel_mode']='DRIVING'
+  points.push(step)
+
+var step={}
+step['start_location']= { lat: 37.41086920000001, lng: -121.8929124}
+step['end_location']= { lat: 37.4118211, lng: -121.8936061}
+step['instruction']='Turn <b>right</b> onto <b>Falcon Dr</b>'
+step['distance']='407 ft'
+step['duration']='1 min'
+ step['travel_mode']='DRIVING'
+  points.push(step)
+
+var step={}
+step['start_location']= { lat: 37.4118211, lng: -121.8936061}
+step['end_location']= { lat: 37.4119074, lng: -121.8933656}
+step['instruction']='Turn <b>right</b>'
+step['distance']='75 ft'
+step['duration']='1 min'
+ step['travel_mode']='DRIVING'
+  points.push(step)
+
+var step={}
+step['start_location']= { lat: 37.4119074, lng: -121.8933656}
+step['end_location']= { lat: 37.4114754, lng: -121.893129}
+step['instruction']='Turn <b>right</b><div style="font-size:0.9em">Destination will be on the left</div>'
+step['distance']='171 ft'
+step['duration']='1 min'
+ step['travel_mode']='DRIVING'
+  points.push(step)
+
+    function initMap(zoom_ = 16) {
+    	directionsService = new google.maps.DirectionsService;
+        directionsDisplay = new google.maps.DirectionsRenderer;
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: points[0]['location'],
+          zoom: zoom_
+        });
+        directionsDisplay.setMap(map);
+        calculateAndDisplayRoute(0);     
+      }
+
+	function calculateAndDisplayRoute(id) {
+        directionsService.route({
+          origin: points[id]['start_location'],
+          destination: points[id]['end_location'],
+          travelMode: points[id]['travel_mode']
+        }, function(response, status) {
+          if (status === 'OK') {
+            directionsDisplay.setDirections(response);
+          } else {
+            window.alert('Directions request failed due to ' + status);
+          }
+        });
+        var handle = document.getElementById('stepsDisplay');
+        handle.innerHTML = 'Step: ' + id.toString() + ' / ' + points.length.toString() + ' <br> Instruction: ' + points[id]['instruction'] + ' <br> Distance: ' + points[id]['distance'] + ' <br> Duration: ' + points[id]['duration'];
+      }
+
+           
+      function viewNext()
+      {
+        if (counter == points.length)
+        {
+          counter = 0
+        }
+        calculateAndDisplayRoute(counter);
+        counter = counter + 1;
+      }
+       
+      function viewPrevious()
+      {
+
+      	counter = counter - 1;
+        if (counter == -1)
+        {
+          counter = points.length - 1;
+        }
+        calculateAndDisplayRoute(counter);
+        
+      }
+
+   </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXYDYmpNXAo01aw71oMT6KJXoI1aTTyvg&libraries=places&callback=initMap"
+        async defer></script>
+  </body>
+</html>
