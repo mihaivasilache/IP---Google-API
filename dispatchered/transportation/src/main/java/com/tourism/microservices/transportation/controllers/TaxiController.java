@@ -1,7 +1,7 @@
-package com.tourism.microservices.controllers;
+package com.tourism.microservices.transportation.controllers;
 
 import ch.qos.logback.classic.pattern.SyslogStartConverter;
-import com.tourism.microservices.models.Taxi;
+import com.tourism.microservices.transportation.models.Taxi;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
@@ -9,11 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
-import static com.tourism.microservices.controllers.PointOfInterestController.readUrl;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 /**
  * Created by Mihai-Home on 01/05/2017.
@@ -21,6 +19,28 @@ import static com.tourism.microservices.controllers.PointOfInterestController.re
 @RestController
 @RequestMapping("taxis")
 public class TaxiController {
+
+    public static String readUrl(String urlString) throws Exception
+    {
+        BufferedReader reader = null;
+        try
+        {
+            URL url = new URL(urlString);
+            reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            StringBuilder buffer = new StringBuilder();
+            int read;
+            char[] chars = new char[1024];
+            while ((read = reader.read(chars)) != -1)
+                buffer.append(chars, 0, read);
+
+            return buffer.toString();
+        } finally
+        {
+            if (reader != null)
+                reader.close();
+        }
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<List<Taxi>> get(@RequestParam(value = "lat", required = true) Float latitude,
@@ -106,6 +126,9 @@ public class TaxiController {
                     if(!obj.isNull("next_page_token")) {
                         nextPageToken = (String) obj.get("next_page_token");
                         obj = new JSONObject(readUrl(String.format(nextPageLink, nextPageToken)));
+                    }
+                    else {
+                        found = false;
                     }
                 } catch (Exception ex) {
                     System.out.println(ex.toString());
