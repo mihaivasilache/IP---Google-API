@@ -237,7 +237,7 @@ public class DispatcherController {
 
     @RequestMapping(value = "/route/{travel_mode}", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> getRouteSteps(@PathVariable(value = "travel_mode") String travelOption,
+        public ResponseEntity<Object> getRouteSteps(@PathVariable(value = "travel_mode") String travelOption,
                                                 @RequestBody List<PointOfInterest> poisList)
     {
         String serviceUrl = "http://localhost:5112/route/" + travelOption;
@@ -255,7 +255,6 @@ public class DispatcherController {
             wr.close();
 
             int status = conn.getResponseCode();
-            System.out.println(status);
             BufferedReader br;
             if (200 <= status && status <= 299) {
                 br = new BufferedReader(new InputStreamReader((conn.getInputStream())));

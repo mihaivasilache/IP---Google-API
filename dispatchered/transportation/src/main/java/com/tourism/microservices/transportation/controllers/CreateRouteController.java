@@ -1,15 +1,15 @@
 package com.tourism.microservices.transportation.controllers;
 
-import com.tourism.microservices.transportation.models.*;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.tourism.microservices.transportation.models.*;;
+import org.json.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.awt.geom.Point2D;
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -78,6 +78,7 @@ public class CreateRouteController {
                 Point2D.Double tempPoint = new Point2D.Double();
                 tempPoint.setLocation(stepObject.getJSONObject("start_location").getDouble("lat"), stepObject.getJSONObject("start_location").getDouble("lng"));
                 tempStep.setStartLocation(tempPoint);
+                tempPoint = new Point2D.Double();
                 tempPoint.setLocation(stepObject.getJSONObject("end_location").getDouble("lat"), stepObject.getJSONObject("end_location").getDouble("lng"));
                 tempStep.setEndLocation(tempPoint);
                 stepsList.add(tempStep);
