@@ -72,8 +72,9 @@ public class TaxiController {
                                 JSONObject poiDetail = new JSONObject(readUrl(String.format(poiDetailUrl, tempPlaceId)));
                                 poiDetail = poiDetail.getJSONObject("result");
                                 String toCheck = "[\"point_of_interest\",\"establishment\"]";
+                                String toCheckReverse = "[\"establishment\",\"point_of_interest\"]";
                                 String types = poiDetail.getString("types");
-                                if(types.equals(toCheck)) {
+                                if(types.equals(toCheck) || types.equals(toCheckReverse)) {
                                     Taxi tempTaxi = new Taxi();
                                     JSONObject location = poiDetail.getJSONObject("geometry");
                                     location = location.getJSONObject("location");
