@@ -23,7 +23,7 @@ import java.util.List;
 public class PointOfInterestController {
 
     public static String readUrl(String urlString) throws Exception {
-        System.out.println("Url: " + urlString);
+        //System.out.println("Url: " + urlString);
         BufferedReader reader = null;
         try {
             URL url = new URL(urlString);
@@ -33,7 +33,7 @@ public class PointOfInterestController {
             char[] chars = new char[1024];
             while ((read = reader.read(chars)) != -1)
                 buffer.append(chars, 0, read);
-            System.out.println("Got response: " + buffer.toString());
+            //System.out.println("Got response: " + buffer.toString());
             return buffer.toString();
         } finally {
             if (reader != null)
