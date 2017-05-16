@@ -1,6 +1,10 @@
 package com.tourism.microservices.controllers;
 
+import com.tourism.microservices.models.PointOfInterest;
 import org.junit.Test;
+import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -10,7 +14,8 @@ import static org.junit.Assert.*;
 public class PointOfInterestControllerTest {
     @Test
     public void readUrl() throws Exception {
-        String answer = PointOfInterestController.readUrl(" https://maps.googleapis.com/maps/api/place/details/json?placeid=" + "ChIJu9059nz7ykARPPUmVNqAy3w" + "&language=en&key=AIzaSyCWAxJGAVwwJG4ugVA7BZX-1QHUQ2XwkVU");
+        String answer = null;
+        answer = PointOfInterestController.readUrl(" https://maps.googleapis.com/maps/api/place/details/json?placeid=" + "ChIJu9059nz7ykARPPUmVNqAy3w" + "&language=en&key=AIzaSyCWAxJGAVwwJG4ugVA7BZX-1QHUQ2XwkVU");
         String expectedAnswer = "{\n" +
                 "   \"html_attributions\" : [],\n" +
                 "   \"result\" : {\n" +
@@ -59,7 +64,13 @@ public class PointOfInterestControllerTest {
 
     @Test
     public void get() throws Exception {
-        assertEquals(4, 4);
+        PointOfInterestController poiController = new PointOfInterestController();
+        float lng = (float)(27.5865453);
+        float lat = (float)(47.156044);
+        int rad = 500;
+        ResponseEntity<List<PointOfInterest>> answer = poiController.get(lat , lng , rad, null);
+        List<PointOfInterest> body = answer.getBody();
+        assertTrue(body.isEmpty());
     }
 
     @Test
