@@ -2,6 +2,8 @@ package com.tourism.microservices.models;
 
 import org.junit.Test;
 
+import java.awt.geom.Point2D;
+
 import static org.junit.Assert.*;
 
 /**
@@ -10,7 +12,10 @@ import static org.junit.Assert.*;
 public class PointOfInterestTest {
     @Test
     public void getLocation() throws Exception {
-        assertEquals(0,0);
+        PointOfInterest x = new PointOfInterest();
+        Point2D.Double expResult = new Point2D.Double(1,1);
+        x.setLocation(expResult);
+        assertEquals(expResult,x.getLocation());
     }
 
     @Test
