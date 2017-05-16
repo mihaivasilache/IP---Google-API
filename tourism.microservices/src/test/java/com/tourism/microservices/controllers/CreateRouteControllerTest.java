@@ -2,6 +2,7 @@ package com.tourism.microservices.controllers;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -10,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CreateRouteControllerTest {
     @Test
     void get() {
+        assertEquals(0,0);
     }
 
 }
