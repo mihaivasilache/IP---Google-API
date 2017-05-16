@@ -107,7 +107,7 @@ public class TaxiController {
                     if(!obj.isNull("next_page_token")) {
                         nextPageToken = (String) obj.get("next_page_token");
                         obj = new JSONObject(readUrl(String.format(nextPageLink, nextPageToken)));
-                    }
+                    }else found = false;
                 } catch (Exception ex) {
                     System.out.println(ex.toString());
                     found = false;
