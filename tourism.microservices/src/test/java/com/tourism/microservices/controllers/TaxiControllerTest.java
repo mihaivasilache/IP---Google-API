@@ -1,16 +1,13 @@
 package com.tourism.microservices.controllers;
 
 import com.tourism.microservices.models.Taxi;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by beibl on 16-May-17.
