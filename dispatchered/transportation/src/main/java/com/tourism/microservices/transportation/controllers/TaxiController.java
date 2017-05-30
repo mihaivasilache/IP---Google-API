@@ -16,6 +16,8 @@ import java.util.*;
 /**
  * Created by Mihai-Home on 01/05/2017.
  */
+
+@CrossOrigin
 @RestController
 @RequestMapping("taxis")
 public class TaxiController {

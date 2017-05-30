@@ -17,6 +17,8 @@ import java.util.List;
 /**
  * Created by apiriu on 4/28/2017.
  */
+
+@CrossOrigin
 @RestController
 @RequestMapping("pointsofinterest")
 public class PointOfInterestController {

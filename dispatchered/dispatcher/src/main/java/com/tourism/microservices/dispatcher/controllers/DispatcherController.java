@@ -17,6 +17,8 @@ import java.util.*;
 /**
  * Created by apiriu on 5/9/2017.
  */
+
+@CrossOrigin
 @RestController
 @RequestMapping("")
 public class DispatcherController {

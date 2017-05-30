@@ -17,7 +17,7 @@ import java.util.List;
  */
 
 
-
+@CrossOrigin
 @RestController
 @RequestMapping("maps")
 public class BuildMapController {

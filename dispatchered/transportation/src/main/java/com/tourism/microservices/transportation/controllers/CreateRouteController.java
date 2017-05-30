@@ -16,6 +16,7 @@ import java.util.*;
  * Created by gbalan on 5/9/2017.
  */
 
+@CrossOrigin
 @RestController
 @RequestMapping("route")
 public class CreateRouteController {
