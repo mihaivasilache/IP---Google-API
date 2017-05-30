@@ -20,6 +20,9 @@ import java.util.List;
 @RestController
 @RequestMapping("pointsofinterest")
 public class PointOfInterestController {
+    private String apiKey = "AIzaSyDXYDYmpNXAo01aw71oMT6KJXoI1aTTyvg";
+    private String mapsServicesKey = "AIzaSyCWAxJGAVwwJG4ugVA7BZX-1QHUQ2XwkVU";
+    private String geocodingServiceLink = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s";
 
     public static String readUrl(String urlString) throws Exception {
         BufferedReader reader = null;
@@ -55,7 +58,7 @@ public class PointOfInterestController {
             }
         }
 
-        String apiKey = "AIzaSyDXYDYmpNXAo01aw71oMT6KJXoI1aTTyvg";
+//        String apiKey = "AIzaSyDXYDYmpNXAo01aw71oMT6KJXoI1aTTyvg";
         String requestLink = "https://maps.googleapis.com/maps/api/place/nearbysearch/" +
                 "json?location=%s,%s&radius=%s&language=en&key=" + apiKey;
         String nextPageLink = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken=%s&key=" + apiKey;
@@ -145,11 +148,105 @@ public class PointOfInterestController {
         return new ResponseEntity<List<PointOfInterest>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    private PointOfInterest getPoi(String placeId){
+        PointOfInterest poi = new PointOfInterest();
+
+        String poiDetailUrl = "https://maps.googleapis.com/maps/api/place/details/json?placeid=%s&language=en&key=AIzaSyCWAxJGAVwwJG4ugVA7BZX-1QHUQ2XwkVU";
+        try {
+            JSONObject jAnswer = new JSONObject(readUrl(String.format(poiDetailUrl, placeId)));
+            JSONObject jResult = jAnswer.getJSONObject("result");
+
+            try {
+                poi.setFormattedNumber(jResult.getString("international_phone_number"));
+            } catch (JSONException e) {
+            }
+            try {
+                poi.setName(jResult.getString("name"));
+            } catch (JSONException e) {
+            }
+            try {
+                poi.setDescription(jResult.getString("scope"));
+            } catch (JSONException e) {
+            }
+            try {
+                poi.setAddress(jResult.getString("formatted_address"));
+            } catch (JSONException e) {
+            }
+            try {
+                poi.setIcon(jResult.getString("icon"));
+            } catch (JSONException e) {
+            }
+            try {
+                poi.setLocationId(jResult.getString("place_id"));
+            } catch (JSONException e) {
+            }
+
+            try {
+                poi.setRating(jResult.getDouble("rating"));
+            } catch (JSONException e) {
+            }
+
+            try {
+                poi.setReference(jResult.getString("reference"));
+            } catch (JSONException e) {
+            }
+
+            try {
+                poi.setUrl(jResult.getString("url"));
+            } catch (JSONException e) {
+            }
+
+            try {
+                poi.setVicinity(jResult.getString("vicinity"));
+            } catch (JSONException e) {
+            }
+
+            try {
+                poi.setWebsite(jResult.getString("website"));
+            } catch (JSONException e) {
+            }
+
+            try {
+                JSONObject jReviewField = jResult.getJSONObject("reviews");
+                for (int i = 0; i < jResult.length(); i++) {
+                    poiReview review;
+                    review = new poiReview();
+                    review.setAuthor(jReviewField.getString("author"));
+                    review.setAuthorURL(jReviewField.getString("author_url"));
+                    review.setLanguage(jReviewField.getString("language"));
+                    review.setRating(jReviewField.getDouble("rating"));
+                    review.setText(jReviewField.getString("text"));
+                    review.setTime(jReviewField.getDouble("time"));
+                    poi.addReview(review);
+                }
+            } catch (JSONException e) {
+            }
+
+            try {
+                JSONArray jTypes = jResult.getJSONArray("types");
+                for (int i = 0; i < jTypes.length(); i++) {
+                    poi.addType(jTypes.getString(i));
+                }
+            } catch (JSONException e) {
+            }
+
+            try {
+                JSONObject jLocation = jResult.getJSONObject("geometry").getJSONObject("location");
+                poi.setLocation(new Point2D.Double(jLocation.getDouble("lat"), jLocation.getDouble("lng")));
+            } catch (JSONException e) {
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return poi;
+    }
+
     @RequestMapping(value = {"/{placeid}/{key}", "/{placeid}"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> getDetail(@PathVariable(value = "placeid") String placeId,
                                             @PathVariable(value = "key", required = false) String key) {
-        System.out.println(placeId);
+//        System.out.println(placeId);
         PointOfInterest poi = new PointOfInterest();
         boolean keyIsSpecified = (key != null && !key.isEmpty());
 
@@ -275,4 +372,38 @@ public class PointOfInterestController {
         return new ResponseEntity<>(poi, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/byaddress", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<List<PointOfInterest>> getPOIsFromAddresses(@RequestBody List<String> addressList) {
+        if(addressList.size() <= 0) {
+            return new ResponseEntity<List<PointOfInterest>>(HttpStatus.NOT_ACCEPTABLE);
+        }
+        try {
+            List<PointOfInterest> resultList = new ArrayList<PointOfInterest>();
+            for (String poiAddress : addressList) {
+                PointOfInterest poiResult;
+                try{
+                    String requestLink = String.format(geocodingServiceLink, poiAddress, mapsServicesKey);
+//                    System.out.println(requestLink);
+                    JSONObject jAnswer = new JSONObject(readUrl(requestLink));
+//                    System.out.println(jAnswer.toString());
+                    JSONArray jResults = jAnswer.getJSONArray("results");
+                    JSONObject jResult = jResults.getJSONObject(0);
+                    String placeId = jResult.getString("place_id");
+                    poiResult = getPoi(placeId);
+                    resultList.add(poiResult);
+                }
+                catch (Exception ee){
+                    ee.printStackTrace();
+                }
+            }
+            if (resultList.size() <= 0) {
+                return new ResponseEntity<List<PointOfInterest>>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<List<PointOfInterest>>(resultList, HttpStatus.OK);
+        }
+        catch (Exception ex) {
+            return new ResponseEntity<List<PointOfInterest>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

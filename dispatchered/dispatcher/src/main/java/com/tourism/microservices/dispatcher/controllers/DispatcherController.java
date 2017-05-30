@@ -137,6 +137,64 @@ public class DispatcherController {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @RequestMapping(value = "/pointsofinterest/byaddress", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<Object> getPOIsFromAddresses(@RequestBody List<String> addressList)
+    {
+        String serviceUrl = "http://localhost:5113/pointsofinterest/byaddress";
+        try {
+            URL urlObj = new URL(serviceUrl);
+            HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json; charset=utf8");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream(), "UTF-8");
+            ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+            String json = ow.writeValueAsString(addressList);
+            wr.write(json);
+            wr.close();
+
+            int status = conn.getResponseCode();
+            BufferedReader br;
+            if (200 <= status && status <= 299) {
+                br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+                StringBuilder buffer = new StringBuilder();
+                int read;
+                char[] chars = new char[1024];
+                while ((read = br.read(chars)) != -1)
+                    buffer.append(chars, 0, read);
+                JSONArray jsonObj = null;
+                try {
+                    jsonObj = new JSONArray(buffer.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                ObjectMapper mapper = new ObjectMapper();
+                com.fasterxml.jackson.databind.node.ObjectNode result = mapper.createObjectNode();
+                JsonNode jsonNode = mapper.readTree(jsonObj.toString());
+                result.set("array", jsonNode);
+
+                return new ResponseEntity<Object>(jsonNode, HttpStatus.OK);
+            } else {
+                br = new BufferedReader(new InputStreamReader((conn.getErrorStream())));
+                StringBuilder buffer = new StringBuilder();
+                int read;
+                char[] chars = new char[1024];
+                while ((read = br.read(chars)) != -1)
+                    buffer.append(chars, 0, read);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @RequestMapping(value = "/maps/points", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> getPOIMap(@RequestBody List<PointOfInterest> poisList)
